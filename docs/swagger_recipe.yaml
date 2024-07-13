@@ -1,0 +1,260 @@
+openapi: 3.0.0
+info:
+  x-logo:
+    url: "https://s3.amazonaws.com/dkspinheiro.com/bank_api/givery_logo.png"
+  description: |
+    "This is the Recipe api."
+
+    # Introduction
+    This API is documented in **OpenAPI format** and it's designed for providing features for recipe service.
+
+    # Requests
+    The base url of the API is http://127.0.0.1:8089/.
+    All **POST** requests are **JSON** encoded and must have content type of **application/json**.
+
+    At the present moment we don't have any **PUT** or **PATCH** operations
+
+    Following we have the header options and it's values:
+
+    Header | Values
+    ----------------|-------------
+    Content-Type | application/json
+
+    # HTTP Verbs
+      - **GET** - To retrieve a list or an individual recipe.
+      - **POST** - To create a new recipe
+      - **DELETE** - To delete a recipe
+      - **PATCH** - to update arecipe
+
+    # HTTP Status Codes
+    ##Success Codes:
+
+      - **200 OK** - for GET /recipes/recipe_id, GET /recipes, POST /recipes, PATCH /recipes/recipe_id and DELETE /recipes/recipe_id
+
+    <br/>
+    ##Error Codes:
+      - **404 Not Found** - For any other endpoint not listed above
+
+
+    <br/><br/>
+    **Sample Request:**
+
+        GET /recipes
+
+    <br/><br/>
+    **Sample Response:**
+
+        200 OK
+        Content-Type: application/json
+        {
+          "recipes" = [
+              {
+                "cost": 30,
+                "created_at": "2024-06-21",
+                "id": 1,
+                "ingredients": "onion, egg, seasoning, soy sauce",
+                "making_time": "120 min",
+                "serves": "2 people",
+                "title": "test recipe",
+                "update_at": "2024-06-21"
+              },
+              {
+                "cost": 50,
+                "created_at": "2024-06-21",
+                "id": 2,
+                "ingredients": "onion, egg, seasoning, soy sauce",
+                "making_time": "20 min",
+                "serves": "8 people",
+                "title": "new recipe",
+                "update_at": "2024-06-21"
+              }
+            ]
+        }
+
+  version: "0.1"
+  title: "Recipe API"
+  contact:
+    email: "85silva.dave@gmail.com"
+host: "http://127.0.0.1:8089"
+schemes:
+- "http"
+security:
+paths:
+  /recipes:
+    post:
+      tags:
+      - "Recipe"
+      summary: "Creates a new recipe"
+      description: ""
+      operationId: "newRecipe"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "new recipe to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Recipe"
+      responses:
+        200:
+          description: "Object Created"
+          schema:
+            $ref: "#/definitions/RecipeResponse"
+        400:
+          description: "Request Error"
+          schema:
+            $ref: "#/definitions/ApiErrorResponse"
+    get:
+      tags:
+        - "Recipe"
+      summary: "Gets all recipes"
+      description: ""
+      operationId: "getAllRecipes"
+      consumes:
+        - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RecipeResponse"
+        400:
+          description: "Not found"
+  /recipes/{recipe_id}:
+    get:
+      tags:
+        - "Recipe"
+      summary: "Gets Recipe by id"
+      description: ""
+      operationId: "getRecipeById"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "recipe_id"
+          description: "returns a specific recipe"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/RecipeResponse"
+        400:
+          description: "Not found"
+    delete:
+      tags:
+        - "Recipe"
+      summary: "Deletes Recipe"
+      description: ""
+      operationId: "delRecipe"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "recipe_id"
+          description: "deletes a specific recipe"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "Not found"    
+    patch:
+      tags:
+        - "Recipe"
+      summary: "Updates a specific recipe"
+      description: ""
+      operationId: "patchRecipe"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "new data for the recipe"
+          required: true
+          schema:
+            $ref: "#/definitions/Recipe"
+      responses:
+        200:
+          description: "Object Updated"
+          schema:
+            $ref: "#/definitions/Recipe"
+        400:
+          description: "Request Error"
+          schema:
+            $ref: "#/definitions/ApiErrorResponse"
+components:
+definitions:
+  RecipeResponse:
+    type: "object"
+    required:
+      - "id"
+      - "title"
+      - "making_time"
+      - "serves"
+      - "ingredients"
+      - "cost"
+      - "created_at"
+      - "update_at"
+    properties:
+      id:
+        type: "integer"
+      title:
+        type: "string"
+      making_time:
+        type: "string"
+      serves:
+        type: "string"
+      ingredients:
+        type: "string"
+      cost:
+        type: "integer"
+      created_at:
+        type: "string"
+        format: 'date'
+      update_at:
+        type: "string"
+        format: 'date'
+  Recipe:
+    type: "object"
+    required:
+    - "title"
+    - "making_time"
+    - "serves"
+    - "ingredients"
+    - "cost"
+    properties:
+      title:
+        type: "string"
+      making_time:
+        type: "string"
+      serves:
+        type: "string"
+      ingredients:
+        type: "string"
+      cost:
+        type: "integer"
+    xml:
+      name: "Recipe"
+  ApiErrorResponse:
+    type: "object"
+    properties:
+      error:
+        type: "object"
+        properties:
+          details:
+            type: "object"
+          error_category:
+            type: "string"
+          error_type:
+            type: "string"
+          message:
+            type: "string"
