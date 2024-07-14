@@ -1,0 +1,11 @@
+name: Complete Workflow
+
+on:
+  test
+
+jobs:
+  say_hi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hi
+        run: echo "Hi"
