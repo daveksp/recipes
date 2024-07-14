@@ -12,7 +12,7 @@ provider "aws" {
 # import public key on AWS console
 # mv terraform-aws ~/.ssh
 # ssh -i ~/.ssh/terraform-aws ec2-user@something.something
-
+# test
 ########### INSTANCES ###########
 
 

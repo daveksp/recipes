@@ -10,7 +10,7 @@ env:
 
 jobs:
   terraform:
-    if: github.repository != 'daveksp/recipes'
+    #if: github.repository != 'daveksp/recipes'
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     permissions:
