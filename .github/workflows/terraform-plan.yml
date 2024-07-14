@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: ["Test"]
     types: [complete]
-  pull_request:
+  #pull_request:
 
 env:
   TF_CLOUD_ORGANIZATION: "bptech"
