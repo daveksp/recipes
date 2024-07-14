@@ -2,7 +2,7 @@ name: 'Terraform Plan'
 on:
   workflow_run:
     workflows: ["Test"]
-    types: [complete]
+    types: [requested]
   #pull_request:
 
 env:
