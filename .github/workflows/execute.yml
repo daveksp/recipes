@@ -1,7 +1,7 @@
 name: Complete Workflow
 
 on:
-  test
+  Test
 
 jobs:
   say_hi:
