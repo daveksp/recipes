@@ -1,9 +1,6 @@
 name: 'Terraform Plan'
 on:
-  workflow_run:
-    workflows: ["Test"]
-    types: [requested]
-  #pull_request:
+  pull_request:
 
 env:
   TF_CLOUD_ORGANIZATION: "bptech"
@@ -13,7 +10,6 @@ env:
 
 jobs:
   terraform:
-    #if: github.repository != 'daveksp/recipes'
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     permissions:
