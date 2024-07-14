@@ -1,5 +1,8 @@
 name: 'Terraform Plan'
 on:
+  workflow_run:
+    workflows: ["Test"]
+    types: [complete]
   pull_request:
 
 env:
@@ -13,9 +16,6 @@ jobs:
     #if: github.repository != 'daveksp/recipes'
     name: "Terraform Plan"
     runs-on: ubuntu-latest
-    workflows: ["Test"]
-    type:
-      - complete
     permissions:
       contents: read
       pull-requests: write
