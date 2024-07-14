@@ -2,3 +2,8 @@ htmlvoc/
 recipe.db
 recipe_venv/
 recipe/
+.DS_Store
+.coverage
+infrastructure/terraform/.terraform.lock.hcl
+infrastructure/terraform/.terraform/
+terraform.tfstate
