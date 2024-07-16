@@ -23,5 +23,5 @@ class RecipePort(ABC):
         pass
 
     @abstractmethod
-    async def delete_recipe(self, recipe_id: int):
+    async def delete_recipe(self, recipe: Recipe):
         pass

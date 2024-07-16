@@ -10,10 +10,10 @@ from pydantic import BaseModel
 @dataclass(frozen=True)
 class Recipe(BaseModel):
     id: Optional[int] = None
-    title = str
-    making_time = str
-    serves = str
-    ingredients = str
-    cost = int
+    title: str
+    making_time: str
+    serves: str
+    ingredients: str
+    cost: int
     created_at: Optional[datetime] = None
     update_at: Optional[datetime] = None

@@ -1,3 +1,5 @@
+from dependency_injector.wiring import Provide
+from dependency_injector.wiring import inject
 from flask import abort
 from flask import Blueprint
 from flask import current_app
@@ -7,6 +9,9 @@ from flask import request
 from flask_restful import Api
 from flask_restful import Resource
 
+from app.api.adapters.entrypoints.rest.v1.models.recipe import CreateRecipeV1Response
+from app.api.adapters.entrypoints.rest.v1.models.recipe import CreateRecipeV1ListResponse
+from app.api.adapters.entrypoints.rest.v1.models.recipe import CreateRecipeV1Request
 from app.api.recipes.schema import RecipeSchema
 from app.extensions import db
 from app.api.messages import recipe_details
@@ -28,93 +33,70 @@ api = Api(blueprint)
 @api.resource('')
 class AccountsResource(Resource):
 
-    def post(self):
+    @inject
+    def post(self, recipe_port: RecipePort):
         """ Create a recipe """
         recipe = Recipe(**request.json)
-        #book = await book_port.create_book(book)
+        recipe_port = None
+        recipe = recipe_port.create_recipe(recipe)
 
-        response.status_code = status.HTTP_201_CREATED
-        response.headers[
-            http.HEADER_CONTENT_TYPE
-        ] = http.HEADER_CONTENT_TYPE_APPLICATION_JSON
-        return CreateBookV1Response(
-            book_isbn=book.isbn,
-        )
+        return CreateRecipeV1Response(
+            **recipe
+        ), 201
 
-        recipe_schema = RecipeSchema()
-        recipe = recipe_schema.load(request.json or {})
 
-        db.session.add(recipe)
-        db.session.commit()
-
-        response = {
-            "message": recipe_created,
-            "recipe": []
-        }
-        response['recipe'].append(recipe_schema.dump(recipe))
-        return make_response(jsonify(response), 200)
-
-    def get(self, recipe_id=None):
+    def get(self, recipe_port: RecipePort, recipe_id=None):
         """retrieves a list of recipes"""
-        recipe_schema = RecipeSchema()
         response = None
 
         if request.path.endswith('/'):
             recipe_id = 1
 
         if recipe_id:
-            recipe = Recipe.query.get(recipe_id)
+            recipe = recipe_port.get_recipe_by_id(recipe_id)
             if not recipe:
                 current_app.logger.exception(f"Recipe with id={recipe_id} not found")
                 return make_response(jsonify({}), 200)
             else:
                 response = {
                     "message": recipe_details,
-                    "recipe": [recipe_schema.dump(recipe)]
+                    "recipe": [recipe]
                 }
                 
         else:
-            recipes = Recipe.query.all()
+            recipes = recipe_port.get_all_recipes()
             response = {
-                "recipes": recipe_schema.dump(recipes, many=True)
+                "recipes": recipes
             }
-            #response = 
-
         return make_response(jsonify(response), 200)
 
-    def patch(self, recipe_id=None):
+
+    def patch(self, recipe_port: RecipePort, recipe_id=None):
         """updates a specific recipe"""
         recipe_schema = RecipeSchema()
 
         if request.path.endswith('/'):
             recipe_id = 1
 
-        recipe = Recipe.query.get(recipe_id)
-        data = request.json 
-        
+        recipe = recipe_port.get_recipe_by_id(recipe_id)
         if not recipe:
             current_app.logger.exception(f"Recipe with id={recipe_id} not found")
             return make_response(jsonify({}), 200)
-            #abort(404)
 
-        for attribute in data:
-            setattr(recipe, attribute, data[attribute])
-
-        db.session.add(recipe)
-        db.session.commit()
+        data = request.json 
+        updated_recipe = recipe_port.update_recipe(recipe, data)
 
         response = {
             "message": recipe_updated,
-            "recipe": [recipe_schema.dump(recipe)]
+            "recipe": [updated_recipe]
         }
-        #response = recipe_schema.dump(recipe)
         return make_response(jsonify(response), 200)
     
-    def delete(self, recipe_id):
+
+    def delete(self, recipe_port: RecipePort, recipe_id):
         """deletes a specific recipe"""
 
-        recipe = Recipe.query.get(recipe_id)
-        
+        recipe = recipe_port.get_recipe_by_id(recipe_id)
         if not recipe:
             current_app.logger.exception(f"Recipe with id={recipe_id} not found")
             response = {
@@ -122,9 +104,7 @@ class AccountsResource(Resource):
             }
             return make_response(jsonify(response), 200)
         
-        db.session.delete(recipe)
-        db.session.commit()
-        
+        recipe_port.delete_recipe(recipe)  
         response = {
             "message": recipe_removed,
         }

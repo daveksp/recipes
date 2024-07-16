@@ -25,6 +25,10 @@ class RecipeModel(db.Model):
 
 class RecipeRepository(RecipePort):
 
+    def __init__(self, db_engine):
+        self.db_engine = db_engine
+
+
     def get_recipe_by_id(self, recipe_id: int) -> List[Recipe] | None:
         recipe = Recipe.query.get(recipe_id)
         if recipe:
@@ -38,8 +42,8 @@ class RecipeRepository(RecipePort):
 
 
     def create_recipe(self, recipe: Recipe) -> Recipe:
-        db.session.add(recipe)
-        db.session.commit()
+        self.db_engine.session.add(recipe)
+        self.db_engine.session.commit()
         return Recipe.model_validate(recipe._mapping)
 
 
@@ -47,12 +51,12 @@ class RecipeRepository(RecipePort):
         for attribute in updated_data:
             setattr(recipe, attribute, updated_data[attribute])
 
-        db.session.add(recipe)
-        db.session.commit()
+        self.db_engine.session.add(recipe)
+        self.db_engine.session.commit()
 
         return Recipe.model_validate(recipe._mapping)
 
 
     def delete_recipe(self, recipe: Recipe):
-        db.session.delete(recipe)
-        db.session.commit()        
+        self.db_engine.session.delete(recipe)
+        self.db_engine.session.commit()        

@@ -6,9 +6,11 @@ certifi==2024.6.2
 charset-normalizer==3.3.2
 click==8.1.7
 dataclasses-json==0.6.7
+dependency-injector==4.41.0
 exceptiongroup==1.2.1
 Flask==3.0.3
 flask-babel==4.0.0
+Flask-Injector==0.15.0
 flask-marshmallow==1.2.1
 Flask-Migrate==4.0.7
 Flask-RESTful==0.3.10
